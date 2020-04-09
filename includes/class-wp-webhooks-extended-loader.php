@@ -41,6 +41,8 @@ class Wp_Webhooks_Extended_Loader {
 	 */
 	protected $filters;
 
+	protected $webhookNames;
+
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
@@ -50,7 +52,48 @@ class Wp_Webhooks_Extended_Loader {
 
 		$this->actions = array();
 		$this->filters = array();
+		$this->webhookNames = array(
+			'category' => 'test',
+			'post_tag' => 'test',
+			'nav_menu' => 'test'
+		);
 
+		$this->add_action( 'edit_category', $this, 'wp_hook_category', 10, 2 );
+		$this->add_action( 'delete_category', $this, 'wp_hook_category', 10, 2 );
+
+		$this->add_action( 'edit_post_tag', $this, 'wp_hook_tag', 10, 2 );
+		$this->add_action( 'delete_post_tag', $this, 'wp_hook_tag', 10, 2 );
+
+		$this->add_action( 'edit_nav_menu', $this, 'wp_hook_menu', 10, 2 );
+		$this->add_action( 'delete_nav_menu', $this, 'wp_hook_menu', 10, 2 );
+
+	}
+
+	public function wp_hook_edit_category ($categoryId) {
+		do_action( 'wp_webhooks_send_to_webhook', array(
+			'id' => $categoryId,
+			'taxonomy' => 'category'
+		), (
+			is_array($this->webhookNames['category']) ? $this->webhookNames['category'] : array($this->webhookNames['category'])
+		) );
+	}
+
+	public function wp_hook_tag ($tagId) {
+		do_action( 'wp_webhooks_send_to_webhook', array(
+			'id' => $tagId,
+			'taxonomy' => 'tag'
+		), (
+			is_array($this->webhookNames['post_tag']) ? $this->webhookNames['post_tag'] : array($this->webhookNames['post_tag'])
+		) );
+	}
+
+	public function wp_hook_menu ($menuId) {
+		do_action( 'wp_webhooks_send_to_webhook', array(
+			'id' => $menuId,
+			'taxonomy' => 'menu'
+		), (
+			is_array($this->webhookNames['nav_menu']) ? $this->webhookNames['nav_menu'] : array($this->webhookNames['nav_menu'])
+		) );
 	}
 
 	/**
