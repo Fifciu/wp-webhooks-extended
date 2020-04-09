@@ -69,7 +69,7 @@ class Wp_Webhooks_Extended_Loader {
 
 	}
 
-	public function wp_hook_edit_category ($categoryId) {
+	public function wp_hook_category ($categoryId) {
 		do_action( 'wp_webhooks_send_to_webhook', array(
 			'id' => $categoryId,
 			'taxonomy' => 'category'
